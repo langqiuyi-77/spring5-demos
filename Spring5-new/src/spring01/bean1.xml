@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--任务1：配置User对象创建:默认使用无参构造-->
+    <bean id="user" class="spring01.pojo.User"></bean>
+
+    <!--任务2：对对象进行依赖注入set-->
+    <bean id="user1" class="spring01.pojo.User">
+        <property name="name" value="郎秋意"></property>
+        <property name="wifename" value="无"></property>
+    </bean>
+
+    <!--任务3：对对象进行有参数构造注入属性-->
+    <bean id="user2" class="spring01.pojo.User">
+        <constructor-arg name="name" value="哇还是说"></constructor-arg>
+        <constructor-arg name="wifename" value="哇还是说的老婆"></constructor-arg>
+    </bean>
+
+    <!--任务4：对对象进行p名称空间注入(了解)-->
+    <bean id="user3" class="spring01.pojo.User" p:name="你好啊" p:wifename="你好啊的老婆"></bean>
+
+    <!--任务5：对xml注入其他类型的属性null和特殊符号-->
+    <bean id="user4" class="spring01.pojo.User">
+        <property name="name">
+            <null/>
+        </property>
+        <property name="wifename">
+            <value><![CDATA[<<南京>>]]></value>
+        </property>
+    </bean>
+
+    <!--任务6：注入外部bean-->
+    <bean id="userService" class="spring01.pojo.UserService">
+        <property name="userDao" ref="userDaoImpl"></property>
+    </bean>
+    <bean id="userDaoImpl" class="spring01.pojo.UserDao"></bean>
+
+    <!--任务7：注入内部bean-->
+    <bean id="emp" class="spring01.pojo.Emp">
+        <property name="ename" value="lang"></property>
+        <property name="gender" value="girl"></property>
+        <!--设置对象类型属性-->
+        <property name="dept">
+            <bean id="dept" class="spring01.pojo.Dept">
+                <property name="dname" value="security"></property>
+            </bean>
+        </property>
+    </bean>
+
+    <!--任务8：级联赋值什么值有效果：我觉得级联赋值就是外部bean-->
+    <bean id="emp1" class="spring01.pojo.Emp">
+        <property name="ename" value="lang"></property>
+        <property name="gender" value="girl"></property>
+        <property name="dept" ref="dept1"></property>
+        <!--级联赋值:要是有dept.dname这种形式要有emp要有对dept属性的get方方法，但是dept可以没有getdname的方法-->
+        <property name="dept.dname" value="network"></property>
+    </bean>
+    <bean id="dept1" class="spring01.pojo.Dept">
+        <property name="dname" value="security"></property>
+    </bean>
+
+    <!--任务9：注入集合属性-->
+    <bean id="stu" class="spring01.pojo.Stu">
+        <!--数组类型属性注入-->
+        <property name="courses">
+            <array>
+                <value>java课程</value>
+                <value>数据库课程</value>
+            </array>
+        </property>
+        <!--list类型属性注入-->
+        <property name="list">
+            <list>
+                <value>张三</value>
+                <value>小三</value>
+            </list>
+        </property>
+        <!--map类型的注入-->
+        <property name="maps">
+            <map>
+                <entry key="JAVA" value="java"></entry>
+                <entry key="PHP" value="php"></entry>
+            </map>
+        </property>
+        <!--set类型属性的注入-->
+        <property name="sets">
+            <set>
+                <value>Mysql</value>
+                <value>Redis</value>
+            </set>
+        </property>
+    </bean>
+
+    <!--任务10；list注入object-->
+    <bean id="course1" class="spring01.pojo.Course">
+        <property name="name" value="java课程"></property>
+    </bean>
+    <bean id="course2" class="spring01.pojo.Course">
+        <property name="name" value="redis课程"></property>
+    </bean>
+    <bean id="stu1" class="spring01.pojo.Stu">
+        <property name="courseList">
+            <list>
+                <ref bean="course1"></ref>
+                <ref bean="course2"></ref>
+            </list>
+        </property>
+    </bean>
+
+    <!--任务11：把集合注入部分提取出来-->
+    <util:list id="courseList">
+        <value>张三</value>
+        <value>小三</value>
+    </util:list>
+    <bean id="stu2" class="spring01.pojo.Stu">
+        <!--list类型属性注入-->
+        <property name="list" ref="courseList"></property>
+    </bean>
+
+    <!--任务12：工厂Bean-->
+    <bean id="myBean" class="spring01.pojo.MyBean"></bean>
+
+    <!--任务13：bean作用域多实例-->
+    <bean id="userService1" class="spring01.pojo.UserService" scope="prototype"></bean>
+
+    <!--任务14：bean生命周期-->
+    <!--配置后置处理器-->
+    <bean id="myBeanPost" class="spring01.pojo.MyBeanPost"></bean>
+    <bean id="orders" class="spring01.pojo.Orders" init-method="initMethod"
+          destroy-method="destroyMethod">
+        <property name="oname" value="手机"></property>
+    </bean>
+
+    <!--任务15: xml自动装配 未进行-->
+    <!--<bean id="emp2" class="spring01.pojo.Emp" autowire="">-->
+    <!--</bean>-->
+    <!--<bean id="dept2" class="spring01.pojo.Dept">-->
+        <!--<property name="dname" value="security"></property>-->
+    <!--</bean>-->
+
+    <!--任务15: 引入外部属性文件去配置连接池-->
+    <!--引入外部属性文件-->
+    <context:property-placeholder location="spring01/jdbc.properties"></context:property-placeholder>
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${prop.driverClass}"></property>
+        <property name="url" value="${prop.url}"></property>
+        <property name="username" value="${prop.username}"></property>
+        <property name="password" value="${prop.password}"></property>
+    </bean>
+</beans>
